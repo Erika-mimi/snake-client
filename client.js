@@ -20,11 +20,28 @@ const connect = function () {
 //自由に動かせるようになる
   process.stdin.on('data', function(message) {
     conn.write(message);
-    conn.write('Move: up');
+    // conn.write('Move: up');
 
   });
   return conn;
 };
 
+// setup interface to handle user input from stdin
 
-module.exports = { connect };
+const setupInput = function () {
+  const stdin = process.stdin;
+  stdin.setRawMode(true);
+  stdin.setEncoding("utf8");
+  stdin.resume();
+  stdin.on("data", handlerUserInput);
+  return stdin;
+};
+
+const handlerUserInput = function(data) {
+  //\u0003' means ctrl + c
+  if (data === '\u0003') {
+    console.log("exiting terminal")
+    process.exit();
+    }
+}
+module.exports = { connect, setupInput };
